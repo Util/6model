@@ -589,7 +589,7 @@ my knowhow NQPClassHOW {
         if +@!parents == 0 && $!name ne 'Mu' {
             self.add_parent($obj, Mu)
         }
-        
+
         # Some things we only do if we weren't already composed once, like
         # building the MRO.
         unless $!composed {
@@ -599,7 +599,7 @@ my knowhow NQPClassHOW {
 
         # Incorporate any new multi candidates (needs MRO built).
         self.incorporate_multi_candidates($obj);
-        
+
         # Compose attributes.
         for @!attributes { $_.compose($obj) }
 
@@ -670,7 +670,7 @@ my knowhow NQPClassHOW {
         # MRO starts with this object.
         my @mro;
         @mro[0] := $obj;
-        
+
         # Now add all parents until we have none.
         my $cur_obj := $obj;
         my @parents := $cur_obj.HOW.parents($cur_obj, :local(1));
@@ -692,7 +692,7 @@ my knowhow NQPClassHOW {
         # XXX TODO: when we have roles, need these here too.
         nqp::publish_type_check_cache($obj, @!mro)
     }
-    
+
     method publish_method_cache($obj) {
         # Walk MRO and add methods to cache, unless another method
         # lower in the class hierarchy "shadowed" it.
@@ -791,7 +791,7 @@ my knowhow NQPAttribute {
             :has_mutator($has_mutator));
         $obj
     }
-    
+
     method BUILD(:$name, :$has_accessor, :$has_mutator) {
         $!name := $name;
         $!has_accessor := $has_accessor;

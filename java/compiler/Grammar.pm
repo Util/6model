@@ -35,7 +35,7 @@ token deflongname {
 }
 
 token ENDSTMT {
-    [ 
+    [
     | \h* $$ <.ws> <?MARKER('endstmt')>
     | <.unv>? $$ <.ws> <?MARKER('endstmt')>
     ]?
@@ -78,7 +78,7 @@ token pod_comment {
         || <.panic: '=begin without matching =end'>
         ]
     | <identifier>
-        .*? ^^ <?before \h* [ 
+        .*? ^^ <?before \h* [
             '='
             [ 'cut' »
               <.panic: 'Obsolete pod format, please use =begin/=end instead'> ]?
@@ -395,7 +395,7 @@ rule regex_declarator {
     [
     | $<proto>=[proto] [regex|token|rule]
       <deflongname>
-      [ 
+      [
       || '{' '<...>' '}'<?ENDSTMT>
       || <.panic: "Proto regex body must be <...>">
       ]
@@ -409,9 +409,9 @@ rule regex_declarator {
 }
 
 token dotty {
-    '.' 
+    '.'
     [ <longname=deflongname>
-    | <?['"]> <quote> 
+    | <?['"]> <quote>
         [ <?[(]> || <.panic: "Quoted method name requires parenthesized arguments"> ]
     ]
 

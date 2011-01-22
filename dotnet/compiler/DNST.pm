@@ -2,7 +2,7 @@
 # .Net concepts. This allows most of a PAST compiler for .Net to be
 # written and used to generate C# for now, but later we can generate IL.
 # A tree must have the form:
-# 
+#
 #    DNST::CompilationUnit
 #        DNST::Using
 #        ...more usings...
@@ -11,7 +11,7 @@
 #                Binding and method call nodes
 #            ...more methods...
 #        ...more classes...
-# 
+#
 # That is, we must have a compilation unit at the top level, which may
 # contain Using or Class nodes. The Class nodes may only contain Method
 # nodes.
@@ -180,7 +180,7 @@ class DNST::MethodCall is DNST::Node {
     has $!name;
     has $!void;
     has $!type;
-    
+
     method on($set?) {
         if $set { $!on := $set }
         $!on
@@ -306,7 +306,7 @@ class DNST::Return is DNST::Node {
         if pir::defined($set) { $!target := $set }
         $!target
     }
-    
+
     method new($target) {
         my $obj := self.CREATE;
         $obj.target($target);
@@ -422,20 +422,20 @@ class DNST::JumpTable is DNST::Node {
         if pir::defined(%set) { %!names := %set }
         %!names
     }
-    
+
     # (prologue) label just before the jumptable
     method label($set?) {
         if pir::defined($set) { $!label := $set }
         $!label
     }
-    
+
     # DNST::Local - int register in which to store the target
     #   branch's index in the jumptable
     method register($set?) {
         if pir::defined($set) { $!register := $set }
         $!register
     }
-    
+
     # returns DNST::Stmts node with code that ends up branching
     #   (indirectly through a jumptable with string gotos computed
     #   at compile-time) to the destination label with that $name
@@ -445,7 +445,7 @@ class DNST::JumpTable is DNST::Node {
             DNST::Goto.new(:label($!label.name))
         )
     }
-    
+
     # accepts the name of a label; registers a label with this
     #   jumptable; returns the label.
     method mark($name) {
@@ -455,7 +455,7 @@ class DNST::JumpTable is DNST::Node {
         @!children.push($lbl);
         $lbl
     }
-    
+
     method get_index($name) {
         my $i := 0;
         for @!children {
@@ -464,7 +464,7 @@ class DNST::JumpTable is DNST::Node {
         }
         -1
     }
-    
+
     method new(*@children) {
         my $obj := self.CREATE;
         $obj.set_children(@children);

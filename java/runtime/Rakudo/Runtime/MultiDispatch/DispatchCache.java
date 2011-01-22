@@ -9,7 +9,7 @@ import Rakudo.Metamodel.SharedTable;
 /// be relatively cache friendly, be thread safe, be lock-free, and be
 /// reasonably fast to do lookups in. I came up with it on a train at 9am
 /// so it may not be perfect. :-)
-/// 
+///
 /// The basic idea is that we start with an array of references to arity
 /// specific sub-caches, and each of those is a bunch of type IDs and
 /// then a reference to the result that we want to call. We have a limit
@@ -17,16 +17,16 @@ import Rakudo.Metamodel.SharedTable;
 /// number of things cached per arity. We do random eviction on the
 /// latter; things that get called a lot will quickly find their way
 /// back into the cache, so probabilistically it should be reasonable.
-/// 
+///
 /// Additionally, this is implemented in a way that tries to keep things
 /// contiguous in memory. We could do better in C I suspect, but this
 /// shouldn't be too bad.
-/// 
+///
 /// Finally, it's a lock-free design, meaning we keep the cache per arity
 /// immutable once it's made. To add something new, we snapshot the current,
 /// build a new thing and CAS it in place. This means that lookups can
 /// safely happen without locking.
-/// 
+///
 /// An improvement may well be to sort the list of type tuples. We could
 /// then know when we won't find anything earlier in lookup. (Binary
 /// search is also possible but probably has crappy cache locality.) But
@@ -207,7 +207,7 @@ public class DispatchCache
 
     /// <summary>
     /// Takes a set of positional parameters and, based on their STable
-    /// IDs and definedness, 
+    /// IDs and definedness,
     /// </summary>
     /// <param name="Positionals"></param>
     /// <returns></returns>

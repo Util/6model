@@ -168,7 +168,7 @@ sub make_blocks_init_method($name) {
         :name($name),
         :params(@params),
         :return_type('void'),
-        
+
         # Create array for storing these.
         JST::Bind.new(
             'StaticBlockInfo',
@@ -221,7 +221,7 @@ sub make_constants_init_method($name) {
                 'null'
             )
         ),
-        
+
         # Create array for storing these.
         JST::Bind.new(
             'ConstantsTable',
@@ -252,11 +252,11 @@ sub get_unique_id($prefix) {
 our multi sub jst_for(PAST::Block $block) {
     # Unshift this PAST::Block onto the block list.
     @*PAST_BLOCKS.unshift($block);
-    
+
     # We'll collect all the parameter nodes and lexical declarations.
     my @*PARAMS;
     my @*LEXICALS;
-    
+
     # Fresh bind context.
     my $*BIND_CONTEXT := 0;
 
@@ -283,7 +283,7 @@ our multi sub jst_for(PAST::Block $block) {
         :params('ThreadContext TC', 'RakudoObject Block', 'RakudoObject Capture'),
         :return_type('RakudoObject')
     );
-    
+
     # Emit all the statements.
     my @inner_blocks;
     my $stmts := JST::Stmts.new();
@@ -296,7 +296,7 @@ our multi sub jst_for(PAST::Block $block) {
         }
     }
 
-    # Handle loadinit. 
+    # Handle loadinit.
     if +@($block.loadinit) {
         my $*OUTER_SBI := $our_sbi;
         my @*INNER_BLOCKS;
@@ -362,7 +362,7 @@ our multi sub jst_for(PAST::Block $block) {
         $stmts,
         JST::Bind.new( 'TC.CurrentContext', 'C.Caller' )
     ));
-    
+
     # Add nested inner blocks after it (.Net does not support
     # nested blocks).
     @*INNER_BLOCKS.push($result);
@@ -465,7 +465,7 @@ our multi sub jst_for(PAST::Op $op) {
         # invocant to hand specially.
         my @args := @($op);
         if +@args == 0 { pir::die("callmethod node must have at least an invocant"); }
-        
+
         # Invocant.
         my $inv := JST::Temp.new(
             :name(get_unique_id('inv')), :type('RakudoObject'),
@@ -483,7 +483,7 @@ our multi sub jst_for(PAST::Op $op) {
                 'Hints.NO_HINT'
             )
         );
-        
+
         # How is capture formed?
         my $capture := JST::MethodCall.new(
             :on('CaptureHelper'), :name('FormWith'), :type('RakudoObject')
@@ -693,7 +693,7 @@ our multi sub jst_for(PAST::Val $val) {
         pir::die("Can not detect type of value")
     }
     my $type_jst := emit_lexical_lookup($type);
-    
+
     # Add to constants table.
     my $make_const := JST::MethodCall.new(
         :on('Ops'), :name('box_' ~ $primitive), :type('RakudoObject'),

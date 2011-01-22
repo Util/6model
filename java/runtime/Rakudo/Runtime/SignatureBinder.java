@@ -25,13 +25,13 @@ public class SignatureBinder // static class in the C# version
     /// <summary>
     /// Binds the capture against the given signature and stores the
     /// bound values into variables in the lexpad.
-    /// 
+    ///
     /// XXX No type-checking is available just yet. :-(
-    /// 
+    ///
     /// XXX No proper handling of optionals and defaults yet.
-    /// 
+    ///
     /// XXX No support for nameds mapping to positionals yet either.
-    /// 
+    ///
     /// (In other words, this kinda sucks...)
     /// </summary>
     /// <param name="C"></param>

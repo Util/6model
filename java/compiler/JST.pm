@@ -180,7 +180,7 @@ class JST::MethodCall is JST::Node {
     has $!name;
     has $!void;
     has $!type;
-    
+
     method on($set?) {
         if $set { $!on := $set }
         $!on
@@ -306,7 +306,7 @@ class JST::Return is JST::Node {
         if pir::defined($set) { $!target := $set }
         $!target
     }
-    
+
     method new($target) {
         my $obj := self.CREATE;
         $obj.target($target);
@@ -422,20 +422,20 @@ class JST::JumpTable is JST::Node {
         if pir::defined(%set) { %!names := %set }
         %!names
     }
-    
+
     # (prologue) label just before the jumptable
     method label($set?) {
         if pir::defined($set) { $!label := $set }
         $!label
     }
-    
+
     # JST::Local - int register in which to store the target
     #   branch's index in the jumptable
     method register($set?) {
         if pir::defined($set) { $!register := $set }
         $!register
     }
-    
+
     # returns JST::Stmts node with code that ends up branching
     #   (indirectly through a jumptable with string gotos computed
     #   at compile-time) to the destination label with that $name
@@ -445,7 +445,7 @@ class JST::JumpTable is JST::Node {
             JST::Goto.new(:label($!label.name))
         )
     }
-    
+
     # accepts the name of a label; registers a label with this
     #   jumptable; returns the label.
     method mark($name) {
@@ -455,7 +455,7 @@ class JST::JumpTable is JST::Node {
         @!children.push($lbl);
         $lbl
     }
-    
+
     method get_index($name) {
         my $i := 0;
         for @!children {
@@ -464,7 +464,7 @@ class JST::JumpTable is JST::Node {
         }
         -1
     }
-    
+
     method new(*@children) {
         my $obj := self.CREATE;
         $obj.set_children(@children);
