@@ -17,15 +17,15 @@ class Mu {
     multi method ACCEPTS(Mu:U $self: $topic) {
         nqp::type_check($topic, self.WHAT)
     }
-    
+
     method defined() {
         nqp::repr_defined(self)
     }
-    
+
     method isa($type) {
         self.HOW.isa(self, $type)
     }
-    
+
     method Bool() {
         nqp::repr_defined(self)
     }
@@ -42,7 +42,7 @@ class Capture {
     method CREATE() {
         nqp::instance_of(self)
     }
-    
+
     method BUILD() {
         $!cap := nqp::instance_of(NQPCapture);
     }
@@ -70,15 +70,15 @@ class Match is Capture {
     has $.to is rw;
     has $.ast is rw;
     has $.cursor is rw;
-    
+
     method chars() {
         $!to - $!from
     }
-    
+
     method CURSOR() {
         $!cursor;
     }
-    
+
     method Str() {
         substr($!target.Str, $!from, $!to - $!from)
     }
@@ -108,7 +108,7 @@ class Regex::Cursor {
     has @.caparray is rw;
     has $.regex is rw;
     has $.special is rw;
-    
+
     my $generation := 0;
     # XXX make const
     my $FALSE := 0;
@@ -117,29 +117,29 @@ class Regex::Cursor {
     my $CURSOR_FAIL_GROUP := -2;
     my $CURSOR_FAIL_RULE := -3;
     my $CURSOR_FAIL_MATCH := -4;
-    
+
     method new_match() {
         Match.new
     }
-    
+
     method new_array() {
         []
     }
-    
+
     method new() {
         self.CREATE();
     }
-    
+
     method Bool() {
         nqp::repr_defined($!match)
             ?? ?$!match
             !! 0
     }
-    
+
     method CREATE() {
         nqp::instance_of(self)
     }
-    
+
     method from_from($set?) {
         my $res;
         if $!from.WHAT =:= NQPInt {
@@ -151,13 +151,13 @@ class Regex::Cursor {
         }
         $res
     }
-    
+
     # index representing 'off the end of the string'
     # (or 1-based length)
     method eos() {
         nqp::length_str($!target)
     }
-    
+
     # Return this cursor's current Match object, generating a new one
     # for the Cursor if one hasn't been created yet.
     method MATCH() {
@@ -170,7 +170,7 @@ class Regex::Cursor {
             $match.target($!target);
             $match.to($!pos);
             $match.from($!from);
-            
+
             # Create any arrayed subcaptures.
             if +@!caparray {
                 my @caparray := @!caparray;
@@ -231,7 +231,7 @@ class Regex::Cursor {
         }
         $match
     }
-    
+
     # Parse C<target> in the current grammar starting with C<regex>.
     # If C<regex> is omitted, then use the C<TOP> rule for the grammar.
     method parse($target, :$rule?, :$actions?, :$rxtrace?, :$p?, :$c?) {
@@ -252,12 +252,12 @@ class Regex::Cursor {
         $cap.bind_pos(0, $cur);
         $rule($cur, $cap).MATCH
     }
-    
+
     # Return the next match from a successful Cursor.
     method next() {
         $!cursor_next().MATCH
     }
-    
+
     # Create a new cursor for matching C<target>.
     method cursor_init($target, $p, $c?) {
         #say("in cursor_init");
@@ -276,7 +276,7 @@ class Regex::Cursor {
         $cur.special(-1);
         $cur
     }
-    
+
     # Create and initialize a new cursor from C<self>.  If C<lang> is
     # provided, then the new cursor has the same type as lang.
     method cursor_start($lang?) {
@@ -315,7 +315,7 @@ class Regex::Cursor {
         }
         $ret
     }
-    
+
     # Permanently fail this cursor.
     method cursor_fail() {
         $!pos := $CURSOR_FAIL_RULE;
@@ -323,7 +323,7 @@ class Regex::Cursor {
         @!bstack := Mu;
         @!cstack := Mu;
     }
-    
+
     # Set the Cursor as passing at C<pos>; calling any reduction action
     # C<name> associated with the cursor.  This method simply sets
     # C<$!match> to a boolean true value to indicate the regex was
@@ -335,19 +335,19 @@ class Regex::Cursor {
         self.reduce($name) if nqp::repr_defined($name);
         self
     }
-    
+
     # Configure this cursor for backtracking via C<!cursor_next>.
     method cursor_backtrack() {
         $!regex := nqp::get_caller_sub(0);
     }
-    
+
     # Log a debug message
     method cursor_debug($tag, *@args) {
         if $!debug {
             say("from: $!from; $tag " ~ join(' ', @args))
         }
     }
-    
+
     # Push a new backtracking point onto the cursor with the given
     # C<rep>, C<pos>, and backtracking C<mark>.  (The C<mark> is typically
     # the address of a label to branch to when backtracking occurs.)
@@ -378,7 +378,7 @@ class Regex::Cursor {
         #say("bstack now has " ~ +@bstack ~ " items");
         @!bstack := @bstack;
     }
-    
+
     # Return information about the latest frame for C<mark>.
     # If C<mark> is zero, return information about the latest frame.
     method mark_peek($tomark) {
@@ -410,7 +410,7 @@ class Regex::Cursor {
         #say('returning ' ~ join(' ', $res));
         $res;
     }
-    
+
     # Remove the most recent C<mark> and backtrack the cursor to the
     # point given by that mark.  If C<mark> is zero, then
     # backtracks the most recent mark.  Returns the backtracked
@@ -429,11 +429,11 @@ class Regex::Cursor {
         my @bstack := @frame[4];
         my $cptr := @frame[5];
         #say("cptr is $cptr");
-        
+
         $!match := Mu;
-        
+
         my $subcur;
-        
+
         if +@bstack {
             #say('bstack was defined');
             if $cptr > 0 {
@@ -448,7 +448,7 @@ class Regex::Cursor {
         }
         [$rep, $pos, $mark, $subcur]
     }
-    
+
     # Like C<!mark_fail> above this backtracks the cursor to C<mark>
     # (releasing any intermediate marks), but preserves the current
     # capture states.
@@ -478,7 +478,7 @@ class Regex::Cursor {
         }
         [$rep, $pos, $mark]
     }
-    
+
     method reduce($name, $key?, $match?) {
         my $actions := $*ACTIONS;
         if nqp::repr_defined($actions) {
@@ -492,17 +492,17 @@ class Regex::Cursor {
             }
         }
     }
-    
+
     method DEBUG($arg?) {
         $!debug := nqp::repr_defined($arg) ?? $arg !! $TRUE;
         1
     }
-    
+
     method before($regex?) {
         my @ret := self.cursor_start;
         my $cur := @ret[0];
         my $pos := @ret[1];
-        
+
         $cur.cursor_pass($pos, 'before')
             if nqp::repr_defined($regex) && $regex($cur);
         $cur;

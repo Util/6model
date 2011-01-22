@@ -44,7 +44,7 @@ method TOP($/) { make $<comp_unit>.ast; }
 
 method deflongname($/) {
     make $<colonpair>
-         ?? ~$<identifier> ~ ':' ~ $<colonpair>[0].ast.named 
+         ?? ~$<identifier> ~ ':' ~ $<colonpair>[0].ast.named
                 ~ '<' ~ colonpair_str($<colonpair>[0].ast) ~ '>'
          !! ~$/;
     # make $<sym> ?? ~$<identifier> ~ ':sym<' ~ ~$<sym>[0] ~ '>' !! ~$/;
@@ -348,11 +348,11 @@ method variable($/) {
         }
         elsif $<twigil>[0] eq '*' {
             $past.scope('contextual');
-            $past.viviself( 
-                PAST::Var.new( 
-                    :scope('package'), :namespace(''), 
+            $past.viviself(
+                PAST::Var.new(
+                    :scope('package'), :namespace(''),
                     :name( ~$<sigil> ~ $<desigilname> ),
-                    :viviself( 
+                    :viviself(
                         PAST::Op.new( 'Contextual ' ~ ~$/ ~ ' not found',
                                       :pirop('die') )
                     )
@@ -376,7 +376,7 @@ method package_declarator:sym<role>($/)    { make package($/); }
 
 sub package($/) {
     my $name := ~$<package_def><name>;
-    
+
     # Prefix the class initialization with initial setup. Also install it
     # in the symbol table right away, and also into $?CLASS.
     $*PACKAGE-SETUP.unshift(PAST::Stmts.new(
@@ -541,7 +541,7 @@ method routine_def($/) {
                 if %sym<cholder> {
                     $cholder := %sym<cholder>;
                 }
-                
+
                 # Otherwise, no candidate holder, so add one.
                 else {
                     # Check we have a proto in scope.
@@ -626,7 +626,7 @@ method method_def($/) {
     # Always need an invocant.
     $past[0].unshift( PAST::Var.new( :name('self'), :scope('parameter') ) );
     $past.symbol('self', :scope('lexical') );
-    
+
     # Provided it's named, install it in the methods table.
     if $<deflongname> {
         # Set name.
@@ -653,7 +653,7 @@ method method_def($/) {
             $to_add
         ));
     }
-    
+
     make $past;
 }
 
@@ -821,10 +821,10 @@ method regex_declarator($/, $key?) {
         return 0;
     }
     else {
-        my $regex := 
+        my $regex :=
             Regex::P6Regex::Actions::buildsub($<p6regex>.ast, @BLOCK.shift);
         $regex.name($name);
-        $past := 
+        $past :=
             PAST::Op.new(
                 :pasttype<callmethod>, :name<new>,
                 PAST::Var.new( :name('Method'), :namespace(['Regex']), :scope<package> ),
@@ -1056,9 +1056,9 @@ method quote:sym</ />($/, $key?) {
         @BLOCK[0].symbol('$/', :scope('lexical'));
         return 0;
     }
-    my $regex := 
+    my $regex :=
         Regex::P6Regex::Actions::buildsub($<p6regex>.ast, @BLOCK.shift);
-    my $past := 
+    my $past :=
         PAST::Op.new(
             :pasttype<callmethod>, :name<new>,
             PAST::Var.new( :name('Regex'), :namespace(['Regex']), :scope<package> ),
@@ -1116,29 +1116,29 @@ class NQP::RegexActions is Regex::P6Regex::Actions {
                               :subtype('declarative'), :node($/) );
     }
 
-    method metachar:sym<{ }>($/) { 
-        make PAST::Regex.new( $<codeblock>.ast, 
+    method metachar:sym<{ }>($/) {
+        make PAST::Regex.new( $<codeblock>.ast,
                               :pasttype<pastnode>, :node($/) );
     }
 
     method metachar:sym<nqpvar>($/) {
-        make PAST::Regex.new( '!INTERPOLATE', $<var>.ast, 
+        make PAST::Regex.new( '!INTERPOLATE', $<var>.ast,
                               :pasttype<subrule>, :subtype<method>, :node($/));
     }
 
-    method assertion:sym<{ }>($/) { 
-        make PAST::Regex.new( '!INTERPOLATE_REGEX', $<codeblock>.ast, 
+    method assertion:sym<{ }>($/) {
+        make PAST::Regex.new( '!INTERPOLATE_REGEX', $<codeblock>.ast,
                               :pasttype<subrule>, :subtype<method>, :node($/));
     }
 
-    method assertion:sym<?{ }>($/) { 
-        make PAST::Regex.new( $<codeblock>.ast, 
+    method assertion:sym<?{ }>($/) {
+        make PAST::Regex.new( $<codeblock>.ast,
                               :subtype<zerowidth>, :negate( $<zw> eq '!' ),
                               :pasttype<pastnode>, :node($/) );
     }
 
     method assertion:sym<var>($/) {
-        make PAST::Regex.new( '!INTERPOLATE_REGEX', $<var>.ast, 
+        make PAST::Regex.new( '!INTERPOLATE_REGEX', $<var>.ast,
                               :pasttype<subrule>, :subtype<method>, :node($/));
     }
 
